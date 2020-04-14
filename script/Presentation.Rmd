@@ -708,6 +708,7 @@ iiv1 <- ggplot(P1Valueii, aes(x = trial, y = value, group = sim_times)) +
 
 grid.arrange(hehev1, hehdv1, heiv1, hdhdv1, hdiv1, iiv1, nrow = 3)
 ```
+
 ## P2Value
 
 ```{r echo=FALSE}
@@ -815,76 +816,3 @@ iia2 <- ggplot(P2Assetii, aes(x = trial, y = value, group = sim_times)) +
 
 grid.arrange(hehea2, hehda2, heia2, hdhda2, hdia2, iia2, nrow = 3)
 ```
-
-## P1Decision
-
-```{r echo=FALSE}
-hehed1 <- ggplot(P1Decisionhehe, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Hedge_Hedge", y = "P1Decision") +
-  theme_classic()
-
-hehdd1 <- ggplot(P1Decisionhehd, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Hedge_Herd", y = "P1Decision") +
-  theme_classic()
-
-heid1 <- ggplot(P1Decisionhei, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Hedge_Inversive", y = "P1Decision") +
-  theme_classic()
-
-hdhdd1 <- ggplot(P1Decisionhdhd, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Herd_Herd", y = "P1Decision") +
-  theme_classic()
-
-hdid1 <- ggplot(P1Decisionhdi, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Herd_Inversive", y = "P1Decision") +
-  theme_classic()
-
-iid1 <- ggplot(P1Decisionii, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Inversive_Inversive", y = "P1Decision") +
-  theme_classic()
-
-grid.arrange(hehed1, hehdd1, heid1, hdhdd1, hdid1, iid1, nrow = 3)
-```
-
-## P2Decision
-
-```{r echo=FALSE}
-hehed2 <- ggplot(P2Decisionhehe, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Hedge_Hedge", y = "P2Decision") +
-  theme_classic()
-
-hehdd2 <- ggplot(P2Decisionhehd, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Hedge_Herd", y = "P2Decision") +
-  theme_classic()
-
-heid2 <- ggplot(P2Decisionhei, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Hedge_Inversive", y = "P2Decision") +
-  theme_classic()
-
-hdhdd2 <- ggplot(P2Decisionhdhd, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Herd_Herd", y = "P2Decision") +
-  theme_classic()
-
-hdid2 <- ggplot(P2Decisionhdi, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Herd_Inversive", y = "P2Decision") +
-  theme_classic()
-
-iid2 <- ggplot(P2Decisionii, aes(x = trial, y = value, group = sim_times)) +
-  geom_line(color = "grey") +
-  labs(x = "Inversive_Inversive", y = "P2Decision") +
-  theme_classic()
-
-grid.arrange(hehed2, hehdd2, heid2, hdhdd2, hdid2, iid2, nrow = 3)
-```
-
