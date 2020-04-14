@@ -21,9 +21,9 @@ Market <- R6Class("Market",
             },
             condition = function(con){
               self$board = switch (con,
-              None={matrix(c(0.05, 0.03, 0, 0.03, 0, -0.03, 0, -0.03, -0.05), nrow = 3, ncol = 3)},
-              Bull={matrix(c(0.10, 0.06, 0, 0.06, 0, -0.03, 0, -0.03, -0.05), nrow = 3, ncol = 3)},
-              Bear={matrix(c(0.05, 0.03, 0, 0.03, 0, -0.06, 0, -0.06, -0.10), nrow = 3, ncol = 3)})
+              Balance={matrix(c(0.05, 0.03, 0, 0.03, 0, -0.03, 0, -0.03, -0.05), nrow = 3, ncol = 3)},
+              Bubble={matrix(c(0.10, 0.06, 0, 0.06, 0, -0.03, 0, -0.03, -0.05), nrow = 3, ncol = 3)},
+              Burst={matrix(c(0.05, 0.03, 0, 0.03, 0, -0.06, 0, -0.06, -0.10), nrow = 3, ncol = 3)})
             },
             game = function(p1act, p2act){
               self$mrow = switch(p1act, B={1}, N={2}, S={3})
@@ -81,9 +81,15 @@ Player <- R6Class("Player",
                       Hedge={rmultinom(1, size = 1, prob = c(0.3,0.65,0.05))}) 
               }
               if(Prob[1,1]){
-                self$decision[Market$trial] = "B"
-                self$cash[Market$trial+1] = self$cash[Market$trial] - Market$price[Market$trial]
-                self$stock[Market$trial+1] = self$stock[Market$trial] + 1
+                if(self$cash[Market$trial] > Market$price[Market$trial]){
+                  self$decision[Market$trial] = "B"
+                  self$cash[Market$trial+1] = self$cash[Market$trial] - Market$price[Market$trial]
+                  self$stock[Market$trial+1] = self$stock[Market$trial] + 1
+                } else {
+                  self$decision[Market$trial] = "N"
+                  self$cash[Market$trial+1] = self$cash[Market$trial]
+                  self$stock[Market$trial+1] = self$stock[Market$trial]
+                }
               }
               else if(Prob[2,1]){
                 self$decision[Market$trial] = "N"
