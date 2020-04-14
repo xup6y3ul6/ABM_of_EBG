@@ -1,0 +1,137 @@
+---
+title: "Presentation"
+author: "Chen"
+date: "4/14/2020"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
+    theme: darkly
+    highlight: tango
+---
+
+# Source
+
+```{r message=FALSE, warning=FALSE}
+# setwd("./GitHub/ABM_of_EBG/script")
+source('class1.R', echo=TRUE)
+library(plotly)
+# install.packages("gridExtra")
+library(gridExtra)
+```
+
+# Main Function
+
+```{r}
+Playgame <- function(times, P1type, P2type){
+  market <- Market$new(total=100)
+  P1 <- Player$new(10000,10,P1type,100)   #P1
+  P2 <- Player$new(10000,10,P2type,100)   #P2
+  for (i in 1:market$total) {
+    P1$decide(market)
+    P2$decide(market)
+    if(i <= 20){
+      market$condition("Balance")
+    } else if (i <= 60){
+      market$condition("Bubble")
+    } else {
+      market$condition("Burst")
+    }
+    market$game(P1$decision[i],P2$decision[i])
+    P1$ending(market)
+    P2$ending(market)
+  }
+  data <- list(
+    market$price,
+    market$dprice,
+    P1$cash,
+    P2$cash,
+    P1$stock,
+    P2$stock,
+    P1$value,
+    P2$value,
+    P1$asset,
+    P2$asset,
+    P1$decision,
+    P2$decision
+  )
+  return(data)
+}
+```
+ 
+# Play game
+
+```{r}
+Hedge_Hedge <- lapply(1:100, FUN = Playgame, P1type = "Hedge", P2type = "Hedge")
+Inversive_Inversive <- lapply(1:100, FUN = Playgame, P1type = "Inversive", P2type = "Inversive")
+Herd_Herd <- lapply(1:100, FUN = Playgame, P1type = "Herd", P2type = "Herd")
+Hedge_Herd <- lapply(1:100, FUN = Playgame, P1type = "Hedge", P2type = "Herd")
+Hedge_Inversive <- lapply(1:100, FUN = Playgame, P1type = "Hedge", P2type = "Inversive")
+Herd_Inversive <- lapply(1:100, FUN = Playgame, P1type = "Herd", P2type = "Inversive")
+```
+
+# Plot
+
+```{r echo=FALSE}
+thing <- c("Price", "Dprice", "P1Cash", "P2Cash", "P1Stock", "P2Stock", "P1Value", "P2Value", "P1Asset", "P2Asset")
+for (i in 1:10) {
+  he_he <- sapply(Hedge_Hedge, "[[", i) %>% 
+    data.frame() %>% 
+    add_column(trial = 1:101) %>% 
+    pivot_longer(-trial, names_to = "sim_times", values_to = "value") %>% 
+    ggplot(aes(x = trial, y = value, group = sim_times)) +
+    geom_line(color = "purple") +
+    labs(x = "Hedge_Hedge") +
+    theme_classic()
+  
+  he_hd <- sapply(Hedge_Herd, "[[", i) %>% 
+    data.frame() %>% 
+    add_column(trial = 1:101) %>% 
+    pivot_longer(-trial, names_to = "sim_times", values_to = "value") %>% 
+    ggplot(aes(x = trial, y = value, group = sim_times)) +
+    geom_line(color = "skyblue") +
+    labs(x = "Hedge_Herd") +
+    theme_classic()
+  
+  he_i <- sapply(Hedge_Inversive, "[[", i) %>% 
+    data.frame() %>% 
+    add_column(trial = 1:101) %>% 
+    pivot_longer(-trial, names_to = "sim_times", values_to = "value") %>% 
+    ggplot(aes(x = trial, y = value, group = sim_times)) +
+    geom_line(color = "pink") +
+    labs(x = "Hedge_Inversive") +
+    theme_classic()
+
+  hd_hd <- sapply(Herd_Herd, "[[", i) %>% 
+    data.frame() %>% 
+    add_column(trial = 1:101) %>% 
+    pivot_longer(-trial, names_to = "sim_times", values_to = "value") %>% 
+    ggplot(aes(x = trial, y = value, group = sim_times)) +
+    geom_line(color = "grey") +
+    labs(x = "Herd_Herd") +
+    theme_classic()  
+  
+  hd_i <- sapply(Herd_Inversive, "[[", i) %>% 
+    data.frame() %>% 
+    add_column(trial = 1:101) %>% 
+    pivot_longer(-trial, names_to = "sim_times", values_to = "value") %>% 
+    ggplot(aes(x = trial, y = value, group = sim_times)) +
+    geom_line(color = "brown") +
+    labs(x = "Herd_Inversive") +
+    theme_classic()
+  
+  i_i <- sapply(Inversive_Inversive, "[[", i) %>% 
+    data.frame() %>% 
+    add_column(trial = 1:101) %>% 
+    pivot_longer(-trial, names_to = "sim_times", values_to = "value") %>% 
+    ggplot(aes(x = trial, y = value, group = sim_times)) +
+    geom_line(color = "green") +
+    labs(x = "Inversive_Inversive") +
+    theme_classic()
+
+  grid.arrange(he_he, he_hd, he_i, hd_hd, hd_i, i_i, nrow = 3, top = thing[i])
+}
+```
+
