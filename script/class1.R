@@ -1,7 +1,6 @@
 # load library
 library(tidyverse)
 library(R6)
-
 # Market Class
 Market <- R6Class("Market",
           public = list(
@@ -71,7 +70,7 @@ Player <- R6Class("Player",
               self$asset[1] = cash + stock * 100
             },
             # ????????????
-            decide = function(){
+            decide = function(Market){
               # ????????????????????????
               if(Market$dprice[Market$trial] > 0){
                 Prob = switch(self$type,
@@ -119,7 +118,7 @@ Player <- R6Class("Player",
               }
             },
             # ????????????
-            ending = function(){
+            ending = function(Market){
               self$value[Market$trial] = self$stock[Market$trial-1] * Market$price[Market$trial-1]
               self$asset[Market$trial] = self$cash[Market$trial-1] + self$value[Market$trial-1]
           },  
