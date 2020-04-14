@@ -18,6 +18,8 @@ output:
 # setwd("./GitHub/ABM_of_EBG/script")
 source('class1.R', echo=TRUE)
 library(plotly)
+# install.packages("gridExtra")
+library(gridExtra)
 ```
 
 # Main Function
@@ -45,32 +47,844 @@ Playgame <- function(times, P1type, P2type){
     market$price,
     market$dprice,
     P1$cash,
-    P1$value,
-    P1$asset,
-    P1$decision,
     P2$cash,
+    P1$stock,
+    P2$stock,
+    P1$value,
     P2$value,
+    P1$asset,
     P2$asset,
+    P1$decision,
     P2$decision
   )
   return(data)
 }
 ```
  
-# Plot
+# Player game
 
 ```{r}
 Hedge_Hedge <- lapply(1:100, FUN = Playgame, P1type = "Hedge", P2type = "Hedge")
+Inversive_Inversive <- lapply(1:100, FUN = Playgame, P1type = "Inversive", P2type = "Inversive")
+Herd_Herd <- lapply(1:100, FUN = Playgame, P1type = "Herd", P2type = "Herd")
+Hedge_Herd <- lapply(1:100, FUN = Playgame, P1type = "Hedge", P2type = "Herd")
+Hedge_Inversive <- lapply(1:100, FUN = Playgame, P1type = "Hedge", P2type = "Inversive")
+Herd_Inversive <- lapply(1:100, FUN = Playgame, P1type = "Herd", P2type = "Inversive")
+```
 
-Price <- sapply(Hedge_Hedge, "[[", 1) %>% 
+## Hedge-Hedge
+
+```{r echo=FALSE}
+Pricehehe <- sapply(Hedge_Hedge, "[[", 1) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+Dpricehehe <- sapply(Hedge_Hedge, "[[", 2) %>% 
   data.frame() %>% 
   add_column(trial = 1:101) %>% 
   pivot_longer(-trial, names_to = "sim_times", values_to = "value")
   
-g <- ggplot(Price, aes(x = trial, y = value, group = sim_times)) +
+P1Cashhehe <- sapply(Hedge_Hedge, "[[", 3) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Cashhehe <- sapply(Hedge_Hedge, "[[", 4) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Stockhehe <- sapply(Hedge_Hedge, "[[", 5) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Stockhehe <- sapply(Hedge_Hedge, "[[", 6) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Valuehehe <- sapply(Hedge_Hedge, "[[", 7) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Valuehehe <- sapply(Hedge_Hedge, "[[", 8) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Assethehe <- sapply(Hedge_Hedge, "[[", 9) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Assethehe <- sapply(Hedge_Hedge, "[[", 10) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Decisionhehe <- sapply(Hedge_Hedge, "[[", 11) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Decisionhehe <- sapply(Hedge_Hedge, "[[", 12) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+```
+
+## Hedge-Herd
+
+```{r echo=FALSE}
+Pricehehd <- sapply(Hedge_Herd, "[[", 1) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+Dpricehehd <- sapply(Hedge_Herd, "[[", 2) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+  
+P1Cashhehd <- sapply(Hedge_Herd, "[[", 3) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Cashhehd <- sapply(Hedge_Herd, "[[", 4) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Stockhehd <- sapply(Hedge_Herd, "[[", 5) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Stockhehd <- sapply(Hedge_Herd, "[[", 6) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Valuehehd <- sapply(Hedge_Herd, "[[", 7) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Valuehehd <- sapply(Hedge_Herd, "[[", 8) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Assethehd <- sapply(Hedge_Herd, "[[", 9) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Assethehd <- sapply(Hedge_Herd, "[[", 10) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Decisionhehd <- sapply(Hedge_Herd, "[[", 11) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Decisionhehd <- sapply(Hedge_Herd, "[[", 12) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+```
+
+## Hedge-Inversive
+
+```{r echo=FALSE}
+Pricehei <- sapply(Hedge_Inversive, "[[", 1) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+Dpricehei <- sapply(Hedge_Inversive, "[[", 2) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+  
+P1Cashhei <- sapply(Hedge_Inversive, "[[", 3) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Cashhei <- sapply(Hedge_Inversive, "[[", 4) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Stockhei <- sapply(Hedge_Inversive, "[[", 5) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Stockhei <- sapply(Hedge_Inversive, "[[", 6) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Valuehei <- sapply(Hedge_Inversive, "[[", 7) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Valuehei <- sapply(Hedge_Inversive, "[[", 8) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Assethei <- sapply(Hedge_Inversive, "[[", 9) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Assethei <- sapply(Hedge_Inversive, "[[", 10) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Decisionhei <- sapply(Hedge_Inversive, "[[", 11) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Decisionhei <- sapply(Hedge_Inversive, "[[", 12) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+```
+
+## Herd-Herd
+
+```{r echo=FALSE}
+Pricehdhd <- sapply(Herd_Herd, "[[", 1) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+Dpricehdhd <- sapply(Herd_Herd, "[[", 2) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+  
+P1Cashhdhd <- sapply(Herd_Herd, "[[", 3) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Cashhdhd <- sapply(Herd_Herd, "[[", 4) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Stockhdhd <- sapply(Herd_Herd, "[[", 5) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Stockhdhd <- sapply(Herd_Herd, "[[", 6) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Valuehdhd <- sapply(Herd_Herd, "[[", 7) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Valuehdhd <- sapply(Herd_Herd, "[[", 8) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Assethdhd <- sapply(Herd_Herd, "[[", 9) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Assethdhd <- sapply(Herd_Herd, "[[", 10) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Decisionhdhd <- sapply(Herd_Herd, "[[", 11) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Decisionhdhd <- sapply(Herd_Herd, "[[", 12) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+```
+
+## Herd-Inversive
+
+```{r echo=FALSE}
+Pricehdi <- sapply(Herd_Inversive, "[[", 1) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+Dpricehdi <- sapply(Herd_Inversive, "[[", 2) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+  
+P1Cashhdi <- sapply(Herd_Inversive, "[[", 3) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Cashhdi <- sapply(Herd_Inversive, "[[", 4) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Stockhdi <- sapply(Herd_Inversive, "[[", 5) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Stockhdi <- sapply(Herd_Inversive, "[[", 6) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Valuehdi <- sapply(Herd_Inversive, "[[", 7) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Valuehdi <- sapply(Herd_Inversive, "[[", 8) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Assethdi <- sapply(Herd_Inversive, "[[", 9) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Assethdi <- sapply(Herd_Inversive, "[[", 10) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Decisionhdi <- sapply(Herd_Inversive, "[[", 11) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Decisionhdi <- sapply(Herd_Inversive, "[[", 12) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+```
+## Inversive-Inversive
+
+```{r echo=FALSE}
+Priceii <- sapply(Inversive_Inversive, "[[", 1) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+Dpriceii <- sapply(Inversive_Inversive, "[[", 2) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+  
+P1Cashii <- sapply(Inversive_Inversive, "[[", 3) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Cashii <- sapply(Inversive_Inversive, "[[", 4) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Stockii <- sapply(Inversive_Inversive, "[[", 5) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Stockii <- sapply(Inversive_Inversive, "[[", 6) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Valueii <- sapply(Inversive_Inversive, "[[", 7) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Valueii <- sapply(Inversive_Inversive, "[[", 8) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Assetii <- sapply(Inversive_Inversive, "[[", 9) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Assetii <- sapply(Inversive_Inversive, "[[", 10) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:101) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P1Decisionii <- sapply(Inversive_Inversive, "[[", 11) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+
+P2Decisionii <- sapply(Inversive_Inversive, "[[", 12) %>% 
+  data.frame() %>% 
+  add_column(trial = 1:100) %>% 
+  pivot_longer(-trial, names_to = "sim_times", values_to = "value")
+```
+
+# Plot
+
+## Price
+
+```{r echo=FALSE}
+hehep <- ggplot(Pricehehe, aes(x = trial, y = value, group = sim_times)) +
   geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "Price") +
   theme_classic()
 
-ggplotly(g)
+hehdp <- ggplot(Pricehehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "Price") +
+  theme_classic()
+
+heip <- ggplot(Pricehei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "Price") +
+  theme_classic()
+
+hdhdp <- ggplot(Pricehdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "Price") +
+  theme_classic()
+
+hdip <- ggplot(Pricehdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "Price") +
+  theme_classic()
+
+iip <- ggplot(Priceii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "Price") +
+  theme_classic()
+
+grid.arrange(hehep, hehdp, heip, hdhdp, hdip, iip, nrow = 3)
+```
+
+## Dprice
+
+```{r echo=FALSE}
+hehed <- ggplot(Dpricehehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "Dprice") +
+  theme_classic()
+
+hehdd <- ggplot(Dpricehehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "Dprice") +
+  theme_classic()
+
+heid <- ggplot(Dpricehei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "Dprice") +
+  theme_classic()
+
+hdhdd <- ggplot(Dpricehdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "Dprice") +
+  theme_classic()
+
+hdid <- ggplot(Dpricehdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "Dprice") +
+  theme_classic()
+
+iid <- ggplot(Dpriceii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "Dprice") +
+  theme_classic()
+
+grid.arrange(hehed, hehdd, heid, hdhdd, hdid, iid, nrow = 3)
+```
+
+## P1Cash
+
+```{r echo=FALSE}
+hehec1 <- ggplot(P1Cashhehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P1Cash") +
+  theme_classic()
+
+hehdc1 <- ggplot(P1Cashhehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P1Cash") +
+  theme_classic()
+
+heic1 <- ggplot(P1Cashhei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P1Cash") +
+  theme_classic()
+
+hdhdc1 <- ggplot(P1Cashhdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P1Cash") +
+  theme_classic()
+
+hdic1 <- ggplot(P1Cashhdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P1Cash") +
+  theme_classic()
+
+iic1 <- ggplot(P1Cashii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P1Cash") +
+  theme_classic()
+
+grid.arrange(hehec1, hehdc1, heic1, hdhdc1, hdic1, iic1, nrow = 3)
+```
+
+## P2Cash
+
+```{r echo=FALSE}
+hehec2 <- ggplot(P2Cashhehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P2Cash") +
+  theme_classic()
+
+hehdc2 <- ggplot(P2Cashhehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P2Cash") +
+  theme_classic()
+
+heic2 <- ggplot(P2Cashhei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P2Cash") +
+  theme_classic()
+
+hdhdc2 <- ggplot(P2Cashhdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P2Cash") +
+  theme_classic()
+
+hdic2 <- ggplot(P2Cashhdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P2Cash") +
+  theme_classic()
+
+iic2 <- ggplot(P2Cashii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P2Cash") +
+  theme_classic()
+
+grid.arrange(hehec2, hehdc2, heic2, hdhdc2, hdic2, iic2, nrow = 3)
+```
+
+## P1Stock
+
+```{r echo=FALSE}
+hehes1 <- ggplot(P1Stockhehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P1Stock") +
+  theme_classic()
+
+hehds1 <- ggplot(P1Stockhehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P1Stock") +
+  theme_classic()
+
+heis1 <- ggplot(P1Stockhei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P1Stock") +
+  theme_classic()
+
+hdhds1 <- ggplot(P1Stockhdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P1Stock") +
+  theme_classic()
+
+hdis1 <- ggplot(P1Stockhdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P1Stock") +
+  theme_classic()
+
+iis1 <- ggplot(P1Stockii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P1Stock") +
+  theme_classic()
+
+grid.arrange(hehes1, hehds1, heis1, hdhds1, hdis1, iis1, nrow = 3)
+```
+
+## P2Stock
+
+```{r echo=FALSE}
+hehes2 <- ggplot(P2Stockhehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P2Stock") +
+  theme_classic()
+
+hehds2 <- ggplot(P2Stockhehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P2Stock") +
+  theme_classic()
+
+heis2 <- ggplot(P2Stockhei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P2Stock") +
+  theme_classic()
+
+hdhds2 <- ggplot(P2Stockhdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P2Stock") +
+  theme_classic()
+
+hdis2 <- ggplot(P2Stockhdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P2Stock") +
+  theme_classic()
+
+iis2 <- ggplot(P2Stockii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P2Stock") +
+  theme_classic()
+
+grid.arrange(hehes2, hehds2, heis2, hdhds2, hdis2, iis2, nrow = 3)
+```
+
+## P1Value
+
+```{r echo=FALSE}
+hehev1 <- ggplot(P1Valuehehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P1Value") +
+  theme_classic()
+
+hehdv1 <- ggplot(P1Valuehehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P1Value") +
+  theme_classic()
+
+heiv1 <- ggplot(P1Valuehei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P1Value") +
+  theme_classic()
+
+hdhdv1 <- ggplot(P1Valuehdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P1Value") +
+  theme_classic()
+
+hdiv1 <- ggplot(P1Valuehdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P1Value") +
+  theme_classic()
+
+iiv1 <- ggplot(P1Valueii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P1Value") +
+  theme_classic()
+
+grid.arrange(hehev1, hehdv1, heiv1, hdhdv1, hdiv1, iiv1, nrow = 3)
+```
+## P2Value
+
+```{r echo=FALSE}
+hehev2 <- ggplot(P2Valuehehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P2Value") +
+  theme_classic()
+
+hehdv2 <- ggplot(P2Valuehehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P2Value") +
+  theme_classic()
+
+heiv2 <- ggplot(P2Valuehei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P2Value") +
+  theme_classic()
+
+hdhdv2 <- ggplot(P2Valuehdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P2Value") +
+  theme_classic()
+
+hdiv2 <- ggplot(P2Valuehdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P2Value") +
+  theme_classic()
+
+iiv2 <- ggplot(P2Valueii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P2Value") +
+  theme_classic()
+
+grid.arrange(hehev2, hehdv2, heiv2, hdhdv2, hdiv2, iiv2, nrow = 3)
+```
+
+## P1Asset
+
+```{r echo=FALSE}
+hehea1 <- ggplot(P1Assethehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P1Asset") +
+  theme_classic()
+
+hehda1 <- ggplot(P1Assethehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P1Asset") +
+  theme_classic()
+
+heia1 <- ggplot(P1Assethei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P1Asset") +
+  theme_classic()
+
+hdhda1 <- ggplot(P1Assethdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P1Asset") +
+  theme_classic()
+
+hdia1 <- ggplot(P1Assethdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P1Asset") +
+  theme_classic()
+
+iia1 <- ggplot(P1Assetii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P1Asset") +
+  theme_classic()
+
+grid.arrange(hehea1, hehda1, heia1, hdhda1, hdia1, iia1, nrow = 3)
+```
+
+## P2Asset
+
+```{r echo=FALSE}
+hehea2 <- ggplot(P2Assethehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P2Asset") +
+  theme_classic()
+
+hehda2 <- ggplot(P2Assethehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P2Asset") +
+  theme_classic()
+
+heia2 <- ggplot(P2Assethei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P2Asset") +
+  theme_classic()
+
+hdhda2 <- ggplot(P2Assethdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P2Asset") +
+  theme_classic()
+
+hdia2 <- ggplot(P2Assethdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P2Asset") +
+  theme_classic()
+
+iia2 <- ggplot(P2Assetii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P2Asset") +
+  theme_classic()
+
+grid.arrange(hehea2, hehda2, heia2, hdhda2, hdia2, iia2, nrow = 3)
+```
+
+## P1Decision
+
+```{r echo=FALSE}
+hehed1 <- ggplot(P1Decisionhehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P1Decision") +
+  theme_classic()
+
+hehdd1 <- ggplot(P1Decisionhehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P1Decision") +
+  theme_classic()
+
+heid1 <- ggplot(P1Decisionhei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P1Decision") +
+  theme_classic()
+
+hdhdd1 <- ggplot(P1Decisionhdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P1Decision") +
+  theme_classic()
+
+hdid1 <- ggplot(P1Decisionhdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P1Decision") +
+  theme_classic()
+
+iid1 <- ggplot(P1Decisionii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P1Decision") +
+  theme_classic()
+
+grid.arrange(hehed1, hehdd1, heid1, hdhdd1, hdid1, iid1, nrow = 3)
+```
+
+## P2Decision
+
+```{r echo=FALSE}
+hehed2 <- ggplot(P2Decisionhehe, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Hedge", y = "P2Decision") +
+  theme_classic()
+
+hehdd2 <- ggplot(P2Decisionhehd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Herd", y = "P2Decision") +
+  theme_classic()
+
+heid2 <- ggplot(P2Decisionhei, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Hedge_Inversive", y = "P2Decision") +
+  theme_classic()
+
+hdhdd2 <- ggplot(P2Decisionhdhd, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Herd", y = "P2Decision") +
+  theme_classic()
+
+hdid2 <- ggplot(P2Decisionhdi, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Herd_Inversive", y = "P2Decision") +
+  theme_classic()
+
+iid2 <- ggplot(P2Decisionii, aes(x = trial, y = value, group = sim_times)) +
+  geom_line(color = "grey") +
+  labs(x = "Inversive_Inversive", y = "P2Decision") +
+  theme_classic()
+
+grid.arrange(hehed2, hehdd2, heid2, hdhdd2, hdid2, iid2, nrow = 3)
 ```
 
