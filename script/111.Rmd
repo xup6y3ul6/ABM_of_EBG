@@ -1,0 +1,34 @@
+---
+title: "Presentation"
+author: "Chen"
+date: "4/14/2020"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
+    theme: darkly
+    highlight: tango
+---
+
+# Source
+
+```{r message=FALSE, warning=FALSE}
+# setwd("./GitHub/ABM_of_EBG/script")
+source('class1.R', echo=TRUE)
+library(plotly) 
+# install.packages("gridExtra")
+library(gridExtra)
+library(plotly)
+```
+
+# Main Function
+
+```{r}
+game <- Game$new(100,"Herd","Hedge")
+game$csv1()     #每組跑出csv
+game$csvwin()   #每組跑一百次的輸贏
+# game$plotting()
+```
+ 
