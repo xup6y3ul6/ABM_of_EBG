@@ -51,13 +51,13 @@ Player <- R6Class("Player",
             decision = NULL, #決策
             total = NA,      #總回合數
             prob = NULL,     #機率
+            change = NA,     #隨回合變動機率
             # 初始化變項
             initialize = function(cash,stock,type,total){
               stopifnot(is.numeric(cash), length(cash) == 1)
               stopifnot(is.numeric(stock), length(stock) == 1)
-              stopifnot(is.character(type), length(type) == 1)
               stopifnot(is.numeric(total), length(total) == 1)
-              
+              stopifnot(is.character(type), length(type) == 1)
               self$cash = vector("numeric", total)
               self$stock = vector("numeric", total)
               self$value = vector("numeric", total)
@@ -68,26 +68,31 @@ Player <- R6Class("Player",
               self$stock[1] = stock
               self$value[1] = stock * 100
               self$asset[1] = cash + stock * 100
+              self$decision[101] = "O"
+              self$decision[101] = "O"
             },
 
             # 決策
             decide = function(Market){
               # 價格波動變化
+              if(Market$trial > 60){
+                self$change = 1.05^(Market$trial - 60)
+              } else {self$change = 1}
               if(Market$dprice[Market$trial] > 0){
                 Prob = switch(self$type,
-                      Herd={rmultinom(1, size = 1, prob = c(0.7,0.2,0.1))},
-                      Inversive={rmultinom(1, size = 1, prob = c(0.1,0.2,0.7))},
-                      Hedge={rmultinom(1, size = 1, prob = c(0.05,0.3,0.65))}) 
+                      Herd={rmultinom(1, size = 1, prob = c(0.7,0.2,0.1*self$change))},
+                      Inversive={rmultinom(1, size = 1, prob = c(0.1,0.2,0.7*self$change))},
+                      Hedge={rmultinom(1, size = 1, prob = c(0.05,0.3,0.65*self$change))}) 
               } else if(Market$dprice[Market$trial] == 0){
                 Prob = switch(self$type,
-                      Herd={rmultinom(1, size = 1, prob = c(1/3,1/3,1/3))},
-                      Inversive={rmultinom(1, size = 1, prob = c(1/3,1/3,1/3))},
-                      Hedge={rmultinom(1, size = 1, prob = c(0.45,0.45,0.1))}) 
+                      Herd={rmultinom(1, size = 1, prob = c(1/3,1/3,1/3*self$change))},
+                      Inversive={rmultinom(1, size = 1, prob = c(1/3,1/3,1/3*self$change))},
+                      Hedge={rmultinom(1, size = 1, prob = c(0.45,0.45,0.1*self$change))}) 
               } else{
                 Prob = switch(self$type,
-                      Herd={rmultinom(1, size = 1, prob = c(0.1,0.2,0.7))},
-                      Inversive={rmultinom(1, size = 1, prob = c(0.7,0.2,0.1))},
-                      Hedge={rmultinom(1, size = 1, prob = c(0.3,0.65,0.05))}) 
+                      Herd={rmultinom(1, size = 1, prob = c(0.1,0.2,0.7*self$change))},
+                      Inversive={rmultinom(1, size = 1, prob = c(0.7,0.2,0.1*self$change))},
+                      Hedge={rmultinom(1, size = 1, prob = c(0.35,0.5,0.15*self$change))}) 
               }
               # 判斷變動
               if(Prob[1,1]){
@@ -121,8 +126,110 @@ Player <- R6Class("Player",
 
             # 結算
             ending = function(Market){
-              self$value[Market$trial] = self$stock[Market$trial-1] * Market$price[Market$trial-1]
-              self$asset[Market$trial] = self$cash[Market$trial-1] + self$value[Market$trial-1]
+              self$value[Market$trial] = self$stock[Market$trial] * Market$price[Market$trial]
+              self$asset[Market$trial] = self$cash[Market$trial] + self$value[Market$trial]
           },  
             lock_objects = F
           ))
+
+Game <- R6Class("Game",
+                public = list(
+                  times = NA,
+                  p1type = NULL,
+                  p2type = NULL,
+                  type = c("Hedge", "Inversive", "Herd"),
+                  game = NULL,
+                  P1 = NULL,
+                  P2 = NULL,
+                  win = NULL,     #加總贏的dataframe
+                  winlst = NULL,  #每一次的win統計
+                  thing = c("Price", "Dprice", "P1Cash", "P2Cash", "P1Stock", "P2Stock", "P1Value", "P2Value", "P1Asset", "P2Asset", "P1Decision", "P2Decision"),
+                  market = Market$new(total=100),
+                  initialize = function(Times, P1type, P2type){
+                    stopifnot(is.numeric(Times), length(Times) == 1)
+                    stopifnot(is.character(P1type), length(P1type) == 1)
+                    stopifnot(is.character(P2type), length(P2type) == 1)
+                    self$times = Times
+                    self$p1type = P1type
+                    self$p2type = P2type
+                  },
+                  playing = function(x){
+                    # print(x)
+                    self$P1 <- Player$new(10000,10,self$p1type,100)
+                    self$P2 <- Player$new(10000,10,self$p2type,100)  
+                    self$market = Market$new(total=100)                    
+                    for (i in 1:self$market$total) {
+                      self$P1$decide(self$market)
+                      self$P2$decide(self$market)
+                      if(i <= 20){
+                        self$market$condition("Balance")
+                      } else if (i <= 60){
+                        self$market$condition("Bubble")
+                      } else {
+                        self$market$condition("Burst")
+                      }
+                      self$market$game(self$P1$decision[i],self$P2$decision[i])
+                      self$P1$ending(self$market)
+                      self$P2$ending(self$market)
+                    }
+                    data <- list(self$market$price,self$market$dprice,self$P1$cash,self$P2$cash,self$P1$stock,self$P2$stock,
+                                      self$P1$value,self$P2$value,self$P1$asset,self$P2$asset,self$P1$decision,self$P2$decision)
+                    return(data)
+                  },
+                  csv1 = function(){
+                    for (i in 1:3) {
+                      for (j in 1:i) {
+                        self$p1type = self$type[i]
+                        self$p2type = self$type[j]
+                        self$game <- as.data.frame(self$playing(1))
+                        colnames(self$game) <- self$thing
+                        write_csv(self$game, paste0(self$p1type,"_",self$p2type,".csv"))
+                      }
+                    }
+                  },
+                  csvwin = function(){
+                    a = 0   #第幾個
+                    self$win <- data.frame()
+                    for (i in 1:3) {
+                      for (j in 1:i) {
+                        a = a + 1 
+                        self$winlst <- c()
+                        self$p1type = self$type[i]
+                        self$p1type = self$type[j]
+                        for (k in 1:self$times) {
+                          self$game <- self$playing(1)
+                          if(self$game[[3]][100] > self$game[[4]][100]){
+                            self$winlst <- append(self$winlst, 1)
+                          } else if(self$game[[3]][100] < self$game[[4]][100]){
+                            self$winlst <- append(self$winlst, 2)
+                          } else{
+                            self$winlst <- append(self$winlst, 0)
+                          }
+                        }
+                        self$win[1,a] <- sum(self$winlst==1)
+                        self$win[2,a] <- sum(self$winlst==2)
+                      }
+                    }
+                    colnames(self$win) <- c("Hedge_Hedge", "Inversive_Hedge", "Inversive_Inversive", "Herd_Hedge", "Herd_Inversive", "Herd_Herd")
+                    write_csv(self$win, "win.csv")
+                  },
+                  plotting = function(){
+                    self$game <- lapply(1:self$times, self$playing)
+                    for (i in 1:self$times) {
+                      self$game <- as.data.frame(self$playing(1))
+                      colnames(self$game) <- self$thing
+                      self$win
+                      self$pic <- sapply(self$game, "[[", i) %>% 
+                        data.frame() %>% 
+                        add_column(trial = 1:101) %>% 
+                        pivot_longer(-trial, names_to = "sim_times", values_to = "value") %>% 
+                        ggplot(aes(x = trial, y = value, group = sim_times)) +
+                        geom_line(color = "skyblue") +
+                        labs(x = paste(self$p1type,self$p2type,sep="_")) +
+                        labs(y = self$thing[i]) +
+                        theme_classic()
+                    }
+                    self$pic
+                    # grid.arrange(self$pic[1:1])
+                  }
+                ))
